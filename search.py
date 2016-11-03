@@ -87,17 +87,67 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
+    Mystack = util.Stack()
+    Mystack.push( (problem.getStartState(), [], []) )
+    while not Mystack.isEmpty():
+        node, actions, visited = Mystack.pop()
+
+        for i, direction, steps in problem.getSuccessors(node):
+            if not i in visited:
+                if problem.isGoalState(i):
+                    return actions + [direction]
+                Mystack.push((i, actions + [direction], visited + [node] ))
+
+    return Mystack
+
+
+
+
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    Myqueue = util.PriorityQueue()
+    Myqueue.push( (problem.getStartState(), []), 0)
+    visited = []
+
+    while not Myqueue.isEmpty():
+        node, actions = Myqueue.pop()
+
+        if problem.isGoalState(node):
+            return actions
+
+        visited.append(node)
+
+        for i, direction, steps in problem.getSuccessors(node):
+            if not i in visited:
+                new_actions = actions + [direction]
+                Myqueue.push((i, new_actions), problem.getCostOfActions(new_actions))
+
+    return Myqueue
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = util.PriorityQueue()
+    fringe.push( (problem.getStartState(), []), 0)
+    visited = []
+
+    while not fringe.isEmpty():
+        node, actions = fringe.pop()
+
+        if problem.isGoalState(node):
+            return actions
+
+        visited.append(node)
+
+        for coord, direction, steps in problem.getSuccessors(node):
+            if not coord in visited:
+                new_actions = actions + [direction]
+                fringe.push((coord, new_actions), problem.getCostOfActions(new_actions))
+
+    return []
+    
 
 def nullHeuristic(state, problem=None):
     """
