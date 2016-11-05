@@ -88,29 +88,38 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    print "", problem
-    print "-Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "-Start's successors:", problem.getSuccessors(problem.getStartState())
+    #print "", problem
+    #print "-Is the start a goal?", problem.isGoalState(problem.getStartState())
+    #print "-Start's successors:", problem.getSuccessors(problem.getStartState())
     print "---------------------------------------------------------------------"
-    print "-Start:", problem.getStartState()
+    #print "-Start:", problem.getStartState()
+    from game import Directions
+    s = Directions.SOUTH
+    w = Directions.WEST
+    e = Directions.EAST
+    n = Directions.NORTH
 
     Mystack = util.Stack()
     Mystack.push( (problem.getStartState(), [], []) )
     while not Mystack.isEmpty():
         node, actions, visited = Mystack.pop()
         
-        for i, direction, steps in problem.getSuccessors(node):
+        for i, direction, dots in problem.getSuccessors(node):
             #print "-node's successors:", problem.getSuccessors(i)
-            if not i in visited:
+            #print "current i : ", i , "node :",node
+            #print " successors : ",problem.getSuccessors(node)
+            if i in visited:
+                continue
                 #print "-Is the  goal?", problem.isGoalState(i)
-                if problem.isGoalState(i):
-                    return actions + [direction]
-                Mystack.push((i, actions + [direction], visited + [node] ))
+            elif problem.isGoalState(i):
+                return actions + [direction]
+            Mystack.push((i, actions + [direction], visited + [node] ))
+
         
-        print "- actions ", actions 
-        print "- direction :",[direction]
-        print "- node visited :", visited 
-        print "- nodes :", [node]
+        #print "- actions ", actions 
+        #print "- direction :",direction
+        #print "- node visited :", visited 
+        #print "- nodes :", [node]
     return [] #path never found !
 
 
@@ -119,9 +128,38 @@ def depthFirstSearch(problem):
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
-    """Search the shallowest nodes in the search tree first."""
+    """Search the shallowest nodes in the search tree first..
+    divides the graph to many possible paths and choose using the priority queue the best cost "least actions" 
+"""
+    print "---------------------------------------------------------------------"
     Myqueue = util.PriorityQueue()
+    #state, action, action cost for priority queue  
     Myqueue.push( (problem.getStartState(), []), 0)
+    visited = []
+    while not Myqueue.isEmpty():
+        node, actions = Myqueue.pop()
+        #print "old actions : ", actions
+        if problem.isGoalState(node):
+            return actions
+
+        visited.append(node)
+        #print " - successors : ",problem.getSuccessors(node)
+        for i, direction, dots in problem.getSuccessors(node):
+            if i in visited:  #don't go back !
+                continue
+            else :    
+                new_actions = actions + [direction]
+                Myqueue.push((i, new_actions), problem.getCostOfActions(new_actions))
+                #print "the action : ",new_actions
+                #print " problem.getCostOfActions(new_actions) :",problem.getCostOfActions(new_actions)
+    return []
+
+def uniformCostSearch(problem):
+    """Search the node of least total cost first."""
+    "*** YOUR CODE HERE ***"
+    Myqueue = util.PriorityQueue()
+    start = problem.getStartState()
+    Myqueue.push( (start, []), 0)
     visited = []
 
     while not Myqueue.isEmpty():
@@ -131,33 +169,13 @@ def breadthFirstSearch(problem):
             return actions
 
         visited.append(node)
-
-        for i, direction, steps in problem.getSuccessors(node):
-            if not i in visited:
+        successors = problem.getSuccessors(node)
+        for i, direction, dots in successors:
+            if i in visited:
+                continue
+            else:    
                 new_actions = actions + [direction]
                 Myqueue.push((i, new_actions), problem.getCostOfActions(new_actions))
-
-    return Myqueue
-
-def uniformCostSearch(problem):
-    """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    fringe = util.PriorityQueue()
-    fringe.push( (problem.getStartState(), []), 0)
-    visited = []
-
-    while not fringe.isEmpty():
-        node, actions = fringe.pop()
-
-        if problem.isGoalState(node):
-            return actions
-
-        visited.append(node)
-
-        for coord, direction, steps in problem.getSuccessors(node):
-            if not coord in visited:
-                new_actions = actions + [direction]
-                fringe.push((coord, new_actions), problem.getCostOfActions(new_actions))
 
     return []
     
@@ -172,6 +190,26 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+   
+    Myqueue = util.PriorityQueue()
+    start = problem.getStartState()
+    Myqueue.push( (start, []), heuristic(start, problem))
+    visited = []
+    while not Myqueue.isEmpty():
+        node, actions = Myqueue.pop()
+
+        if problem.isGoalState(node): #we are done!
+            return actions
+
+        visited.append(node)
+
+        for i, direction, cost in problem.getSuccessors(node):
+            if not i in visited:
+                new_actions = actions + [direction]
+                score = problem.getCostOfActions(new_actions) + heuristic(i, problem)
+                Myqueue.push( (i, new_actions), score)
+
+    return []
     util.raiseNotDefined()
 
 
