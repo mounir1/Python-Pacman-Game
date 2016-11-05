@@ -301,18 +301,17 @@ class CornersProblem(search.SearchProblem):
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
-        """
-        "*** YOUR CODE HERE ***"
-        
-        print " state[0 ] ", state[0]
+        """        
         node = state[0]
 
         visitedCorners = state[1]
-        print " self.corners ", self.corners
+        
         if node in self.corners:
-            if node in visitedCorners and len(visitedCorners) == 4 :
-                return True
-            visitedCorners.append(node)
+            if node not in visitedCorners :
+                visitedCorners.append(node)
+            else :
+                return len(visitedCorners) == 4     
+
         return False
 
     def getSuccessors(self, state):
