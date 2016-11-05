@@ -238,6 +238,7 @@ class StayEastSearchAgent(SearchAgent):
         self.searchType = lambda state: PositionSearchProblem(state, costFn, (1, 1), None, False)
 
 class StayWestSearchAgent(SearchAgent):
+    
     """
     An agent for position search with a cost function that penalizes being in
     positions on the East side of the board.
@@ -249,17 +250,17 @@ class StayWestSearchAgent(SearchAgent):
         costFn = lambda pos: 2 ** pos[0]
         self.searchType = lambda state: PositionSearchProblem(state, costFn)
 
-def manhattanHeuristic(position, problem, info={}):
-    "The Manhattan distance heuristic for a PositionSearchProblem"
-    xy1 = position
-    xy2 = problem.goal
-    return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+    def manhattanHeuristic(position, problem, info={}):
+        "The Manhattan distance heuristic for a PositionSearchProblem"
+        xy1 = position
+        xy2 = problem.goal
+        return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
 
-def euclideanHeuristic(position, problem, info={}):
-    "The Euclidean distance heuristic for a PositionSearchProblem"
-    xy1 = position
-    xy2 = problem.goal
-    return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
+    def euclideanHeuristic(position, problem, info={}):
+        "The Euclidean distance heuristic for a PositionSearchProblem"
+        xy1 = position
+        xy2 = problem.goal
+        return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
 
 #####################################################
 # This portion is incomplete.  Time to write code!  #
@@ -335,11 +336,9 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
             x,y = state[0]
             visitedCorners = state[1]
-            print " ", Actions.directionToVector(action)
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             hitsWall = self.walls[nextx][nexty]
-            print "", self.walls[nextx][nexty]
             if not hitsWall:
                 CornersVisited = list(visitedCorners)
                 NextNode = (nextx, nexty)
@@ -363,38 +362,38 @@ class CornersProblem(search.SearchProblem):
             if self.walls[x][y]: return 999999
         return len(actions)
 
-def cornersHeuristic(state, problem):
-    """
-    A heuristic for the CornersProblem that you defined.
+    def cornersHeuristic(state, problem):
+        """
+        A heuristic for the CornersProblem that you defined.
 
-      state:   The current search state
-               (a data structure you chose in your search problem)
+        state:   The current search state
+                (a data structure you chose in your search problem)
 
-      problem: The CornersProblem instance for this layout.
+        problem: The CornersProblem instance for this layout.
 
-    This function should always return a number that is a lower bound on the
-    shortest path from the state to a goal of the problem; i.e.  it should be
-    admissible (as well as consistent).
-    """
-    corners = problem.corners # These are the corner coordinates
-    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-    node = state[0]
-    visitedCorners = state[1]
-    NoneVisited = []
-    sum = 0
-    for corner in corners: 
-        if not corner in visitedCorners:
-            NoneVisited.append(corner)
+        This function should always return a number that is a lower bound on the
+        shortest path from the state to a goal of the problem; i.e.  it should be
+        admissible (as well as consistent).
+        """
+        corners = problem.corners # These are the corner coordinates
+        walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
+        node = state[0]
+        visitedCorners = state[1]
+        NoneVisited = []
+        sum = 0
+        for corner in corners: 
+            if not corner in visitedCorners:
+                NoneVisited.append(corner)
 
-    currentPoint = node
-    while len(NoneVisited) > 0:
-        distance, corner = min([(util.manhattanDistance(currentPoint, corner), corner) 
-        for corner in NoneVisited])
-        sum += distance
-        currentPoint = corner
-        NoneVisited.remove(corner)
+        currentPoint = node
+        while len(NoneVisited) > 0:
+            distance, corner = min([(util.manhattanDistance(currentPoint, corner), corner) 
+            for corner in NoneVisited])
+            sum += distance
+            currentPoint = corner
+            NoneVisited.remove(corner)
 
-    return sum
+        return sum
 
     
 
