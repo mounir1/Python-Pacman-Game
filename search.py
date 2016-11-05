@@ -187,7 +187,7 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
-def aStarSearch(problem, heuristic=nullHeuristic):
+def aStarSearch(problem, heuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
    
@@ -204,7 +204,9 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         visited.append(node)
 
         for i, direction, cost in problem.getSuccessors(node):
-            if not i in visited:
+            if i in visited:
+                continue
+            else :    
                 new_actions = actions + [direction]
                 score = problem.getCostOfActions(new_actions) + heuristic(i, problem)
                 Myqueue.push( (i, new_actions), score)
