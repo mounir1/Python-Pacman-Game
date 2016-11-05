@@ -10,6 +10,7 @@
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
+# implemented by Mounir Abderrahmani
 
 
 """
@@ -87,18 +88,30 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
+    print "", problem
+    print "-Is the start a goal?", problem.isGoalState(problem.getStartState())
+    print "-Start's successors:", problem.getSuccessors(problem.getStartState())
+    print "---------------------------------------------------------------------"
+    print "-Start:", problem.getStartState()
+
     Mystack = util.Stack()
     Mystack.push( (problem.getStartState(), [], []) )
     while not Mystack.isEmpty():
         node, actions, visited = Mystack.pop()
-
+        
         for i, direction, steps in problem.getSuccessors(node):
+            #print "-node's successors:", problem.getSuccessors(i)
             if not i in visited:
+                #print "-Is the  goal?", problem.isGoalState(i)
                 if problem.isGoalState(i):
                     return actions + [direction]
                 Mystack.push((i, actions + [direction], visited + [node] ))
-
-    return Mystack
+        
+        print "- actions ", actions 
+        print "- direction :",[direction]
+        print "- node visited :", visited 
+        print "- nodes :", [node]
+    return [] #path never found !
 
 
 
