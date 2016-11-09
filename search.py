@@ -132,30 +132,41 @@ def breadthFirstSearch(problem):
     divides the graph to many possible paths and choose using the priority queue the best cost "least actions" 
 """
     print "---------------------------------------------------------------------"
-    Myqueue = util.PriorityQueue()
+    Myqueue = util.Queue()
     #state, action, action cost for priority queue  
-    Myqueue.push( (problem.getStartState(), []), 0)
+    Myqueue.push( (problem.getStartState(), []))
     visited = []
     while not Myqueue.isEmpty():
         node, actions = Myqueue.pop()
         #print "old actions : ", actions
-        if problem.isGoalState(node):
-            return actions
+        #if problem.isGoalState(node):
+         #   return actions
 
-        visited.append(node)
+       
         #print " - successors : ",problem.getSuccessors(node)
         for i, direction, dots in problem.getSuccessors(node):
             if i in visited:  #don't go back !
                 continue
-            else :    
-                new_actions = actions + [direction]
-                Myqueue.push((i, new_actions), problem.getCostOfActions(new_actions))
-                #print "the action : ",new_actions
-                #print " problem.getCostOfActions(new_actions) :",problem.getCostOfActions(new_actions)
+            else :  
+                if problem.isGoalState(i):
+                    return actions + [direction]
+                visited.append(i)
+                Myqueue.push((i, actions+[direction]))
+                #print " visited ", visited                
     return []
 
 def uniformCostSearch(problem):
-    """Search the node of least total cost first."""
+    """Search the node of least total cost first.
+        Uniform Cost Search UCS 
+for each of node's neighbours n
+    if n is not in explored
+        if n is not in frontier
+            frontier.add(n)
+            set n's predecessor to node
+        elif n is in frontier with higher cost
+            replace existing node with n
+            set n's predecessor to node
+    """
     "*** YOUR CODE HERE ***"
     Myqueue = util.PriorityQueue()
     start = problem.getStartState()
@@ -175,9 +186,13 @@ def uniformCostSearch(problem):
                 continue
             else:    
                 new_actions = actions + [direction]
+                print" new_actions", new_actions
+                print "problem.getCostOfActions(new_actions) ", problem.getCostOfActions(new_actions)
+                print "---------------------------"
+                #teh priority queue automatically choses the right path with the laest cost to the goal.
                 Myqueue.push((i, new_actions), problem.getCostOfActions(new_actions))
 
-    return []
+    return [] 
     
 
 def nullHeuristic(state, problem=None):
@@ -187,8 +202,13 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
-def aStarSearch(problem, heuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
+def aStarSearch(problem, heuristic=nullHeuristic):
+    """Search the node that has the lowest combined cost and heuristic first.
+    astar
+
+Pathfinding using A* algorithm
+
+"""
     "*** YOUR CODE HERE ***"
    
     Myqueue = util.PriorityQueue()
@@ -197,10 +217,10 @@ def aStarSearch(problem, heuristic):
     visited = []
     while not Myqueue.isEmpty():
         node, actions = Myqueue.pop()
-
+        #print "node : ",node
         if problem.isGoalState(node): #we are done!
             return actions
-
+        #print " visited ", visited
         visited.append(node)
 
         for i, direction, cost in problem.getSuccessors(node):
@@ -213,6 +233,13 @@ def aStarSearch(problem, heuristic):
 
     return []
     util.raiseNotDefined()
+#heuristics are just functions that take search states and 
+#return numbers that estimate the cost to a nearest goal. 
+#More effective heuristics will return values closer to the actual goal costs. 
+#To be admissible, the heuristic values must be lower bounds on the actual shortest path cost to the #nearest goal (and non-negative).
+# To be consistent, it must additionally hold that if an action has cost c, 
+#then taking that action can only cause a drop in heuristic of at most c.
+
 
 
 # Abbreviations

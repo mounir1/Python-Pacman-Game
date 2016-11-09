@@ -189,7 +189,8 @@ class Grid:
         return '\n'.join([''.join(x) for x in out])
 
     def __eq__(self, other):
-        if other == None: return False
+        if other == None: 
+            return False
         return self.data == other.data
 
     def __hash__(self):

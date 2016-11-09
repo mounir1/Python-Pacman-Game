@@ -20,3 +20,63 @@ python pacman.py -l testSearch -p AStarFoodSearchAgent
 python pacman.py -l trickySearch -p AStarFoodSearchAgent
 python pacman.py -l bigSearch -p ClosestDotSearchAgent -z .5 
 python pacman.py -l bigSearch -p ApproximateSearchAgent -z .5 -q 
+successors = []
+        for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+            # Add a successor state to the successor list if the action is legal
+            # Here's a code snippet for figuring out whether a new position hits a wall:
+            #   x,y = currentPosition
+            #   dx, dy = Actions.directionToVector(action)
+            #   nextx, nexty = int(x + dx), int(y + dy)
+            #   hitsWall = self.walls[nextx][nexty]
+            x,y = state[0]
+            visitedCorners = state[1]
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            hitsWall = self.walls[nextx][nexty]
+            if not hitsWall:
+                CornersVisited = list(visitedCorners)
+                NextNode = (nextx, nexty)
+                if NextNode in self.corners and not NextNode in CornersVisited:
+                   CornersVisited.append( NextNode )
+                successor = ((NextNode, CornersVisited), action, 1)
+                successors.append(successor)
+        self._expanded += 1 # DO NOT CHANGE
+        return successors
+
+
+
+
+def cornersHeuristic(state, problem):
+        """
+        A heuristic for the CornersProblem that you defined.
+
+        state:   The current search state
+                (a data structure you chose in your search problem)
+
+        problem: The CornersProblem instance for this layout.
+
+        This function should always return a number that is a lower bound on the
+        shortest path from the state to a goal of the problem; i.e.  it should be
+        admissible (as well as consistent).
+        """
+        corners = problem.corners 
+        walls = problem.walls 
+        node = state[0]
+        visitedCorners = state[1]
+        NoneVisited = []
+        sum = 0
+        # for a corner in corners if the corner is not yet visited 
+        #we append it to a non visited corners array 
+        for corner in corners: 
+            if not corner in visitedCorners:
+                NoneVisited.append(corner)
+
+        currentPoint = node
+        while len(NoneVisited) > 0:
+            distance, corner = min([(util.manhattanDistance(currentPoint, corner), corner) 
+            for corner in NoneVisited])
+            sum += distance
+            currentPoint = corner
+            NoneVisited.remove(corner)
+
+        return sum

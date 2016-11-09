@@ -74,7 +74,7 @@ class SearchAgent(Agent):
     """
 
     def __init__(self, fn='depthFirstSearch', prob='PositionSearchProblem', heuristic='nullHeuristic'):
-        # Warning: some advanced Python magic is employed below to find the right functions and problems
+            # Warning: some advanced Python magic is employed below to find the right functions and problems
 
         # Get the search function from the name and heuristic
         if fn not in dir(search):
@@ -250,13 +250,13 @@ class StayWestSearchAgent(SearchAgent):
         costFn = lambda pos: 2 ** pos[0]
         self.searchType = lambda state: PositionSearchProblem(state, costFn)
 
-    def manhattanHeuristic(position, problem, info={}):
+def manhattanHeuristic(position, problem, info={}):
         "The Manhattan distance heuristic for a PositionSearchProblem"
         xy1 = position
         xy2 = problem.goal
         return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
 
-    def euclideanHeuristic(position, problem, info={}):
+def euclideanHeuristic(position, problem, info={}):
         "The Euclidean distance heuristic for a PositionSearchProblem"
         xy1 = position
         xy2 = problem.goal
@@ -301,18 +301,28 @@ class CornersProblem(search.SearchProblem):
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
-        """        
+        """    
+        #print " self ",self
+        #print "state ",state
+        #print " state[0 ] ", state[0]    
         node = state[0]
-
+        #print " self.corners ", self.corners
         visitedCorners = state[1]
-        
         if node in self.corners:
-            if node not in visitedCorners :
-                visitedCorners.append(node)
-            else :
-                return len(visitedCorners) == 4     
-
+            if node in visitedCorners:
+                return len(visitedCorners) == 4
+            visitedCorners.append(node)
         return False
+
+        #visitedCorners = state[1]
+        
+        #if node in self.corners:
+         #   if node not in visitedCorners :
+          #      visitedCorners.append(node)
+           # else :
+            #    return len(visitedCorners) == 4     
+
+        #return False
 
     def getSuccessors(self, state):
         """
@@ -361,25 +371,29 @@ class CornersProblem(search.SearchProblem):
             if self.walls[x][y]: return 999999
         return len(actions)
 
-    def cornersHeuristic(state, problem):
+def cornersHeuristic(state, problem):
+    """
+    A heuristic for the CornersProblem that you defined.
+
+      state:   The current search state
+               (a data structure you chose in your search problem)
+
+      problem: The CornersProblem instance for this layout.
+
+    This function should always return a number that is a lower bound
+    on the shortest path from the state to a goal of the problem; i.e.
+    it should be admissible (as well as consistent).
+   
+    
         """
-        A heuristic for the CornersProblem that you defined.
-
-        state:   The current search state
-                (a data structure you chose in your search problem)
-
-        problem: The CornersProblem instance for this layout.
-
-        This function should always return a number that is a lower bound on the
-        shortest path from the state to a goal of the problem; i.e.  it should be
-        admissible (as well as consistent).
-        """
-        corners = problem.corners # These are the corner coordinates
-        walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
+        corners = problem.corners 
+        walls = problem.walls 
         node = state[0]
         visitedCorners = state[1]
         NoneVisited = []
         sum = 0
+        # for a corner in corners if the corner is not yet visited 
+        #we append it to a non visited corners array 
         for corner in corners: 
             if not corner in visitedCorners:
                 NoneVisited.append(corner)
@@ -391,9 +405,9 @@ class CornersProblem(search.SearchProblem):
             sum += distance
             currentPoint = corner
             NoneVisited.remove(corner)
-
+            #print "unvisited corners ", unvisitedCorners
+            #print "Heuristic: ", sum
         return sum
-
     
 
 class AStarCornersAgent(SearchAgent):
@@ -417,7 +431,7 @@ class FoodSearchProblem:
         self.startingGameState = startingGameState
         self._expanded = 0 # DO NOT CHANGE
         self.heuristicInfo = {} # A dictionary for the heuristic to store information
-
+        #print "----   ----"
     def getStartState(self):
         return self.start
 
@@ -441,6 +455,7 @@ class FoodSearchProblem:
     def getCostOfActions(self, actions):
         """Returns the cost of a particular sequence of actions.  If those actions
         include an illegal move, return 999999"""
+        
         x,y= self.getStartState()[0]
         cost = 0
         for action in actions:
@@ -576,7 +591,22 @@ class AnyFoodSearchProblem(PositionSearchProblem):
        
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
+class ApproximateSearchAgent(Agent):
+    "Implement your contest entry here.  Change anything but the class name."
 
+    def registerInitialState(self, state):
+        "This method is called before any moves are made."
+        "*** YOUR CODE HERE ***"
+
+    def getAction(self, state):
+        """
+        From game.py:
+        The Agent will receive a GameState and must return an action from
+        Directions.{North, South, East, West, Stop}
+        """
+        "*** YOUR CODE HERE ***"
+        util.raiseNotDefined()
+        
 def mazeDistance(point1, point2, gameState):
     """
     Returns the maze distance between any two points, using the search functions
@@ -594,3 +624,21 @@ def mazeDistance(point1, point2, gameState):
     assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
     prob = PositionSearchProblem(gameState, start=point1, goal=point2, warn=False, visualize=False)
     return len(search.bfs(prob))
+    
+def mazeDistanceU(point1, point2, gameState):
+    """
+    Returns the maze distance between any two points, using the search functions
+    you have already built.  The gameState can be any game state -- Pacman's position
+    in that state is ignored.
+
+    Example usage: mazeDistance( (2,4), (5,6), gameState)
+
+    This might be a useful helper function for your ApproximateSearchAgent.
+    """
+    x1, y1 = point1
+    x2, y2 = point2
+    walls = gameState.getWalls()
+    assert not walls[x1][y1], 'point1 is a wall: ' + point1
+    assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
+    prob = PositionSearchProblem(gameState, start=point1, goal=point2, warn=False)
+    return len(search.ucs(prob))
