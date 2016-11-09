@@ -386,20 +386,20 @@ def cornersHeuristic(state, problem):
    
     
         """
-        corners = problem.corners 
-        walls = problem.walls 
-        node = state[0]
-        visitedCorners = state[1]
-        NoneVisited = []
-        sum = 0
+    corners = problem.corners 
+    walls = problem.walls 
+    node = state[0]
+    visitedCorners = state[1]
+    NoneVisited = [] 
+    sum = 0
         # for a corner in corners if the corner is not yet visited 
         #we append it to a non visited corners array 
-        for corner in corners: 
-            if not corner in visitedCorners:
-                NoneVisited.append(corner)
+    for corner in corners: 
+       if not corner in visitedCorners:
+            NoneVisited.append(corner)
 
-        currentPoint = node
-        while len(NoneVisited) > 0:
+       currentPoint = node
+       while len(NoneVisited) > 0:
             distance, corner = min([(util.manhattanDistance(currentPoint, corner), corner) 
             for corner in NoneVisited])
             sum += distance
@@ -407,7 +407,7 @@ def cornersHeuristic(state, problem):
             NoneVisited.remove(corner)
             #print "unvisited corners ", unvisitedCorners
             #print "Heuristic: ", sum
-        return sum
+    return sum
     
 
 class AStarCornersAgent(SearchAgent):
